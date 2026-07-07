@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radioactivity & Atoms Explorer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a Cheerful Aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f0fdf4; /* Light joyful green */
+        }
+        h1, h2, h3, .brand-font {
+            font-family: 'Fredoka One', cursive;
+        }
+        /* Custom smooth transition for tab content */
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* Flip Card Styling */
+        .flip-card {
+            background-color: transparent;
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        /* Pulse Animation for Radiation Particles */
+        @keyframes pulse-glow {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+        .glow-particle {
+            animation: pulse-glow 2s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 selection:bg-yellow-200">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-400 text-white shadow-lg p-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-white p-2 rounded-full shadow-inner animate-bounce text-3xl">⚛️</div>
+                <div>
+                    <h1 class="text-2xl sm:text-3xl tracking-wide drop-shadow-md text-white">Atom & Radioactivity Lab</h1>
+                    <p class="text-xs sm:text-sm font-semibold opacity-90 text-yellow-900" id="sub-title">Interactive Science Adventure!</p>
+                </div>
+            </div>
+            <!-- Language Toggle Button -->
+            <button id="langToggle" class="bg-white text-orange-600 hover:bg-orange-100 font-bold px-4 py-2 rounded-full shadow-md transition-transform active:scale-95 flex items-center gap-2">
+                🌐 <span id="langText">Bahasa Melayu</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="bg-white border-b border-orange-100 shadow-sm sticky top-[76px] sm:top-[88px] z-40">
+        <div class="max-w-4xl mx-auto flex justify-around p-2">
+            <button onclick="switchTab('atom-tab', this)" class="tab-btn px-4 py-2 rounded-xl text-sm sm:text-base font-bold text-orange-600 bg-orange-100 transition-all flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                <span>🔬</span> <span data-key="tab1">Atoms Intro</span>
+            </button>
+            <button onclick="switchTab('ion-tab', this)" class="tab-btn px-4 py-2 rounded-xl text-sm sm:text-base font-bold text-slate-600 hover:bg-slate-100 transition-all flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                <span>🔋</span> <span data-key="tab2">Ion Formation</span>
+            </button>
+            <button onclick="switchTab('ionisation-tab', this)" class="tab-btn px-4 py-2 rounded-xl text-sm sm:text-base font-bold text-slate-600 hover:bg-slate-100 transition-all flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                <span>⚠️</span> <span data-key="tab3">Ionisation Effect</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Primary Educational Workspace -->
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6">
+        
+        <!-- ==================== TAB 1: INTRO TO ATOMS ==================== -->
+        <section id="atom-tab" class="tab-content active space-y-6">
+            <div class="bg-amber-100 border-4 border-amber-300 rounded-3xl p-6 shadow-md">
+                <h2 class="text-2xl text-amber-800 mb-2 flex items-center gap-2" data-key="atom-h2">Meet the Atoms!</h2>
+                <p class="text-slate-700 leading-relaxed text-sm sm:text-base" data-key="atom-p1">
+                    Everything in our universe is built of tiny building blocks called <strong>Atoms</strong>! 
+                    At the center is the <strong>nucleus</strong> (housing Proton buddies and Neutron friends), surrounded by buzzing <strong>Electrons</strong> in orbits called shells.
+                </p>
+            </div>
+
+            <!-- Atom Sandbox Interface -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                <!-- Left Control & Info Box -->
+                <div class="lg:col-span-5 bg-white p-6 rounded-3xl shadow-md border-4 border-emerald-300 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl text-emerald-700 mb-4" data-key="select-elem">Select an Element:</h3>
+                        <div class="grid grid-cols-3 gap-2 mb-6">
+                            <button onclick="selectElement('H')" class="elem-btn bg-emerald-500 hover:bg-emerald-600 text-white font-bold p-3 rounded-xl transition-all shadow-md transform hover:-translate-y-1">H</button>
+                            <button onclick="selectElement('C')" class="elem-btn bg-slate-200 hover:bg-emerald-100 text-emerald-800 font-bold p-3 rounded-xl transition-all shadow-md transform hover:-translate-y-1">C</button>
+                            <button onclick="selectElement('O')" class="elem-btn bg-slate-200 hover:bg-emerald-100 text-emerald-800 font-bold p-3 rounded-xl transition-all shadow-md transform hover:-translate-y-1">O</button>
+                            <button onclick="selectElement('Na')" class="elem-btn bg-slate-200 hover:bg-emerald-100 text-emerald-800 font-bold p-3 rounded-xl transition-all shadow-md transform hover:-translate-y-1">Na</button>
+                            <button onclick="selectElement('Cl')" class="elem-btn bg-slate-200 hover:bg-emerald-100 text-emerald-800 font-bold p-3 rounded-xl transition-all shadow-md transform hover:-translate-y-1">Cl</button>
+                            <button onclick="selectElement('U')" class="elem-btn bg-red-500 text-white hover:bg-red-600 font-bold p-3 rounded-xl transition-all shadow-md transform hover:-translate-y-1 animate-pulse">U ☢️</button>
+                        </div>
+
+                        <!-- Dynamic Element Information Display -->
+                        <div class="bg-slate-50 p-4 rounded-2xl border-2 border-dashed border-slate-300 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-2xl font-bold" id="elem-name">Hydrogen (H)</span>
+                                <span class="text-xs uppercase tracking-wider font-bold px-3 py-1 rounded-full text-white" id="elem-tag" style="background-color: #10b981;">Stable</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                                <div class="bg-red-100 text-red-700 p-2 rounded-xl">
+                                    <div class="font-bold text-lg" id="elem-p">1</div>
+                                    <span data-key="protons">Protons</span> (p+)
+                                </div>
+                                <div class="bg-blue-100 text-blue-700 p-2 rounded-xl">
+                                    <div class="font-bold text-lg" id="elem-n">0</div>
+                                    <span data-key="neutrons">Neutrons</span> (n)
+                                </div>
+                                <div class="bg-yellow-100 text-yellow-800 p-2 rounded-xl">
+                                    <div class="font-bold text-lg" id="elem-e">1</div>
+                                    <span data-key="electrons">Electrons</span> (e-)
+                                </div>
+                            </div>
+                            <p id="elem-desc" class="text-sm text-slate-600 italic">Very light gas. Highly flammable!</p>
+                        </div>
+                    </div>
+
+                    <!-- Static Key Guide -->
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex justify-around text-xs font-semibold">
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span> Protons</div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> Neutrons</div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-yellow-400 inline-block"></span> Electrons</div>
+                    </div>
+                </div>
+
+                <!-- Right Display: Visual Atoms Model Canvas -->
+                <div class="lg:col-span-7 bg-slate-900 rounded-3xl p-4 shadow-md flex flex-col justify-center items-center relative overflow-hidden min-h-[350px]">
+                    <div class="absolute top-3 left-4 text-xs text-yellow-400 font-mono tracking-wider">LIVE BOHR ATOM MODEL</div>
+                    <canvas id="atomCanvas" class="w-full max-w-[400px] h-auto aspect-square"></canvas>
+                </div>
+            </div>
+
+            <!-- Quiz Section -->
+            <div class="mt-8 bg-sky-100 border-4 border-sky-300 rounded-3xl p-6">
+                <h3 class="text-xl text-sky-800 mb-4 flex items-center gap-2">🧠 <span data-key="quiz-title">Test Your Mind!</span></h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Quiz Card 1 -->
+                    <div class="flip-card h-48 cursor-pointer" onclick="toggleCard(this)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border-2 border-sky-200 p-6 flex flex-col justify-between items-center shadow-sm">
+                                <span class="bg-sky-200 text-sky-800 px-3 py-1 rounded-full text-xs font-bold" data-key="q-label">QUESTION 1</span>
+                                <p class="text-center font-bold text-slate-700" data-key="q1">Which of the selected elements is highly radioactive and heavy?</p>
+                                <span class="text-xs text-sky-500 font-semibold" data-key="tap-flip">💡 Tap to reveal the answer!</span>
+                            </div>
+                            <div class="flip-card-back bg-gradient-to-br from-emerald-400 to-teal-500 p-6 text-white flex flex-col justify-center items-center shadow-md">
+                                <h4 class="font-bold text-lg mb-2" data-key="ans-label">Correct Answer:</h4>
+                                <p class="text-center font-medium" data-key="ans1">Uranium (U)! It contains 92 Protons and 146 Neutrons in its unstable nucleus, making it radioactive.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Quiz Card 2 -->
+                    <div class="flip-card h-48 cursor-pointer" onclick="toggleCard(this)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border-2 border-sky-200 p-6 flex flex-col justify-between items-center shadow-sm">
+                                <span class="bg-sky-200 text-sky-800 px-3 py-1 rounded-full text-xs font-bold" data-key="q-label">QUESTION 2</span>
+                                <p class="text-center font-bold text-slate-700" data-key="q2">What charge does an electron possess?</p>
+                                <span class="text-xs text-sky-500 font-semibold" data-key="tap-flip">💡 Tap to reveal the answer!</span>
+                            </div>
+                            <div class="flip-card-back bg-gradient-to-br from-emerald-400 to-teal-500 p-6 text-white flex flex-col justify-center items-center shadow-md">
+                                <h4 class="font-bold text-lg mb-2" data-key="ans-label">Correct Answer:</h4>
+                                <p class="text-center font-medium" data-key="ans2">Electrons carry a negative electrical charge (-1) and orbit the nucleus.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 2: ION FORMATION ==================== -->
+        <section id="ion-tab" class="tab-content space-y-6">
+            <div class="bg-indigo-100 border-4 border-indigo-300 rounded-3xl p-6 shadow-md">
+                <h2 class="text-2xl text-indigo-800 mb-2 flex items-center gap-2" data-key="ion-h2">Ion Formation & Electron Exchange</h2>
+                <p class="text-slate-700 leading-relaxed text-sm sm:text-base" data-key="ion-p1">
+                    Atoms always crave a full outer shell to be completely relaxed and stable (usually 8 valence electrons). 
+                    To achieve this, some metallic atoms **donate** electrons, while non-metals gladly **receive** them! This process creates electrical charges.
+                </p>
+            </div>
+
+            <!-- Interactive Sandbox Simulation -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                <!-- Sandbox Canvas Area -->
+                <div class="lg:col-span-8 bg-slate-900 rounded-3xl p-4 shadow-md flex flex-col justify-between relative overflow-hidden min-h-[400px]">
+                    <div class="absolute top-3 left-4 text-xs text-indigo-400 font-mono tracking-wider" id="ion-stage-title">INTERACTIVE EXCHANGE CHAMBER</div>
+                    <canvas id="ionCanvas" class="w-full h-auto aspect-[16/9] bg-slate-950 rounded-2xl border-2 border-slate-800"></canvas>
+                    
+                    <div class="mt-4 flex flex-wrap justify-center gap-2 sm:gap-4 z-10">
+                        <button id="transferBtn" onclick="triggerIonTransfer()" class="bg-indigo-500 hover:bg-indigo-600 active:scale-95 text-white font-bold px-6 py-2 rounded-xl shadow-lg transition-transform text-sm">
+                            <span data-key="btn-transfer">Transfer Electron ⚡</span>
+                        </button>
+                        <button id="resetIonBtn" onclick="resetIonSimulation()" class="bg-slate-700 hover:bg-slate-600 active:scale-95 text-white font-bold px-6 py-2 rounded-xl shadow-lg transition-transform text-sm">
+                            <span data-key="btn-reset">Reset Simulation 🔄</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Status & Informational Text Panels -->
+                <div class="lg:col-span-4 bg-white p-6 rounded-3xl shadow-md border-4 border-indigo-200 flex flex-col justify-between space-y-4">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-indigo-800" data-key="status-title">Reaction Status</h3>
+                        
+                        <!-- Sodium Donor Status -->
+                        <div class="bg-orange-50 border-2 border-orange-200 p-3 rounded-2xl">
+                            <h4 class="font-bold text-orange-700 text-sm flex justify-between">
+                                <span>Sodium (Na)</span>
+                                <span class="bg-orange-200 text-orange-800 px-2 py-0.5 rounded text-[10px] uppercase font-bold" id="na-ion-label">Atom (Neutral)</span>
+                            </h4>
+                            <p class="text-xs text-slate-600 mt-1" id="na-status-text">Has 1 valence electron. Ready to donate!</p>
+                        </div>
+
+                        <!-- Chlorine Recipient Status -->
+                        <div class="bg-green-50 border-2 border-green-200 p-3 rounded-2xl">
+                            <h4 class="font-bold text-green-700 text-sm flex justify-between">
+                                <span>Chlorine (Cl)</span>
+                                <span class="bg-green-200 text-green-800 px-2 py-0.5 rounded text-[10px] uppercase font-bold" id="cl-ion-label">Atom (Neutral)</span>
+                            </h4>
+                            <p class="text-xs text-slate-600 mt-1" id="cl-status-text">Has 7 valence electrons. Needs 1 electron to complete its octet.</p>
+                        </div>
+                    </div>
+
+                    <!-- Informational Box -->
+                    <div class="bg-indigo-50 p-3 rounded-2xl text-xs text-indigo-950 italic">
+                        <p data-key="ion-note">💡 Metals like Sodium lose negative electrons, turning them into positively-charged ions (cations)! Non-metals like Chlorine gain them, turning them negative (anions).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Section -->
+            <div class="mt-8 bg-sky-100 border-4 border-sky-300 rounded-3xl p-6">
+                <h3 class="text-xl text-sky-800 mb-4 flex items-center gap-2">🧠 <span data-key="quiz-title">Test Your Mind!</span></h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Quiz Card 1 -->
+                    <div class="flip-card h-48 cursor-pointer" onclick="toggleCard(this)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border-2 border-sky-200 p-6 flex flex-col justify-between items-center shadow-sm">
+                                <span class="bg-sky-200 text-sky-800 px-3 py-1 rounded-full text-xs font-bold" data-key="q-label">QUESTION 1</span>
+                                <p class="text-center font-bold text-slate-700" data-key="q3">What charge does an atom get when it donates an electron?</p>
+                                <span class="text-xs text-sky-500 font-semibold" data-key="tap-flip">💡 Tap to reveal the answer!</span>
+                            </div>
+                            <div class="flip-card-back bg-gradient-to-br from-emerald-400 to-teal-500 p-6 text-white flex flex-col justify-center items-center shadow-md">
+                                <h4 class="font-bold text-lg mb-2" data-key="ans-label">Correct Answer:</h4>
+                                <p class="text-center font-medium" data-key="ans3">It gains a Positive (+) charge! Since it lost a negative electron, there are now more positive protons than electrons.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Quiz Card 2 -->
+                    <div class="flip-card h-48 cursor-pointer" onclick="toggleCard(this)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border-2 border-sky-200 p-6 flex flex-col justify-between items-center shadow-sm">
+                                <span class="bg-sky-200 text-sky-800 px-3 py-1 rounded-full text-xs font-bold" data-key="q-label">QUESTION 2</span>
+                                <p class="text-center font-bold text-slate-700" data-key="q4">How are Sodium and Chlorine ions held together after exchange?</p>
+                                <span class="text-xs text-sky-500 font-semibold" data-key="tap-flip">💡 Tap to reveal the answer!</span>
+                            </div>
+                            <div class="flip-card-back bg-gradient-to-br from-emerald-400 to-teal-500 p-6 text-white flex flex-col justify-center items-center shadow-md">
+                                <h4 class="font-bold text-lg mb-2" data-key="ans-label">Correct Answer:</h4>
+                                <p class="text-center font-medium" data-key="ans4">Through electrostatic attraction! Opposites attract, creating a strong ionic bond to form common table salt (NaCl).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 3: IONISATION EFFECT ==================== -->
+        <section id="ionisation-tab" class="tab-content space-y-6">
+            <div class="bg-red-100 border-4 border-red-300 rounded-3xl p-6 shadow-md">
+                <h2 class="text-2xl text-red-800 mb-2 flex items-center gap-2" data-key="ionise-h2">Ionisation Effect of Nuclear Radiation</h2>
+                <p class="text-slate-700 leading-relaxed text-sm sm:text-base" data-key="ionise-p1">
+                    When unstable radioactive atoms decay, they shoot out high-energy particles (Alpha, Beta, or Gamma rays). 
+                    As this radiation crashes into surrounding matter, it strips away orbital electrons. This hazardous process is called **Ionisation**!
+                </p>
+            </div>
+
+            <!-- Ionisation Active Simulator -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                <!-- Sandbox Canvas Area -->
+                <div class="lg:col-span-8 bg-slate-900 rounded-3xl p-4 shadow-md flex flex-col justify-between relative overflow-hidden min-h-[400px]">
+                    <div class="absolute top-3 left-4 text-xs text-red-400 font-mono tracking-wider">LIVE RADIATION IONISATION CHAMBER</div>
+                    <canvas id="radiationCanvas" class="w-full h-auto aspect-[16/9] bg-slate-950 rounded-2xl border-2 border-slate-800"></canvas>
+                    
+                    <div class="mt-4 flex flex-wrap justify-center gap-2 sm:gap-4 z-10">
+                        <button onclick="fireRadiation('alpha')" class="bg-yellow-500 hover:bg-yellow-600 active:scale-95 text-slate-950 font-bold px-4 py-2 rounded-xl shadow-lg transition-transform text-xs sm:text-sm">
+                            <span data-key="fire-alpha">Fire Alpha (α) 🔴</span>
+                        </button>
+                        <button onclick="fireRadiation('beta')" class="bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-bold px-4 py-2 rounded-xl shadow-lg transition-transform text-xs sm:text-sm">
+                            <span data-key="fire-beta">Fire Beta (β) 🔵</span>
+                        </button>
+                        <button onclick="fireRadiation('gamma')" class="bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold px-4 py-2 rounded-xl shadow-lg transition-transform text-xs sm:text-sm">
+                            <span data-key="fire-gamma">Fire Gamma (γ) 🟣</span>
+                        </button>
+                        <button onclick="resetRadiationSim()" class="bg-slate-700 hover:bg-slate-600 active:scale-95 text-white font-bold px-4 py-2 rounded-xl shadow-lg transition-all text-xs sm:text-sm">
+                            <span data-key="btn-reset">Reset 🔄</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation Settings & Metrics -->
+                <div class="lg:col-span-4 bg-white p-6 rounded-3xl shadow-md border-4 border-red-200 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-red-800" data-key="chamber-title">Chamber Analysis</h3>
+                        
+                        <div class="bg-slate-100 p-4 rounded-2xl flex justify-between items-center text-center">
+                            <div>
+                                <span class="text-xs uppercase font-bold text-slate-500" data-key="ion-pairs">Ion Pairs Formed</span>
+                                <div id="ion-pairs-count" class="text-4xl font-bold text-red-600 mt-1">0</div>
+                            </div>
+                            <div>
+                                <span class="text-xs uppercase font-bold text-slate-500" data-key="energy-lvl">Energy Level</span>
+                                <div id="radiation-strength" class="text-xl font-bold text-yellow-600 mt-1" data-key="strength-idle">IDLE</div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 text-xs">
+                            <div class="p-2.5 bg-yellow-50 border-l-4 border-yellow-500 rounded text-slate-800">
+                                <strong class="text-yellow-800">Alpha Particles (α):</strong> Very heavy. Massive collision impact, producing highly dense ionisation along a short path.
+                            </div>
+                            <div class="p-2.5 bg-blue-50 border-l-4 border-blue-500 rounded text-slate-800">
+                                <strong class="text-blue-800">Beta Particles (β):</strong> Light electrons. Moderate speed, medium ionisation power, penetrates slightly deeper.
+                            </div>
+                            <div class="p-2.5 bg-purple-50 border-l-4 border-purple-500 rounded text-slate-800">
+                                <strong class="text-purple-800">Gamma Rays (γ):</strong> Pure high-frequency electromagnetic energy. Low direct ionisation rates but incredibly deep penetration.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Section -->
+            <div class="mt-8 bg-sky-100 border-4 border-sky-300 rounded-3xl p-6">
+                <h3 class="text-xl text-sky-800 mb-4 flex items-center gap-2">🧠 <span data-key="quiz-title">Test Your Mind!</span></h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Quiz Card 1 -->
+                    <div class="flip-card h-48 cursor-pointer" onclick="toggleCard(this)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border-2 border-sky-200 p-6 flex flex-col justify-between items-center shadow-sm">
+                                <span class="bg-sky-200 text-sky-800 px-3 py-1 rounded-full text-xs font-bold" data-key="q-label">QUESTION 1</span>
+                                <p class="text-center font-bold text-slate-700" data-key="q5">What is meant by the "ionising power" of radiation?</p>
+                                <span class="text-xs text-sky-500 font-semibold" data-key="tap-flip">💡 Tap to reveal the answer!</span>
+                            </div>
+                            <div class="flip-card-back bg-gradient-to-br from-emerald-400 to-teal-500 p-6 text-white flex flex-col justify-center items-center shadow-md">
+                                <h4 class="font-bold text-lg mb-2" data-key="ans-label">Correct Answer:</h4>
+                                <p class="text-center font-medium" data-key="ans5">It's the ability of radiation to strip electrons from atoms it collides with, forming charged ions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Quiz Card 2 -->
+                    <div class="flip-card h-48 cursor-pointer" onclick="toggleCard(this)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-white border-2 border-sky-200 p-6 flex flex-col justify-between items-center shadow-sm">
+                                <span class="bg-sky-200 text-sky-800 px-3 py-1 rounded-full text-xs font-bold" data-key="q-label">QUESTION 2</span>
+                                <p class="text-center font-bold text-slate-700" data-key="q6">Which of the three radiations has the strongest ionising ability?</p>
+                                <span class="text-xs text-sky-500 font-semibold" data-key="tap-flip">💡 Tap to reveal the answer!</span>
+                            </div>
+                            <div class="flip-card-back bg-gradient-to-br from-emerald-400 to-teal-500 p-6 text-white flex flex-col justify-center items-center shadow-md">
+                                <h4 class="font-bold text-lg mb-2" data-key="ans-label">Correct Answer:</h4>
+                                <p class="text-center font-medium" data-key="ans6">Alpha particles (α)! Because they are large, slow, and possess a strong (+2) charge, making them highly effective at stripping electrons.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-slate-800 text-white p-4 text-center text-sm border-t-4 border-amber-400">
+        <p>&copy; 2026 Radioactivity Physics Simulator. Handcrafted for Malaysian Science Teachers! 🇲🇾</p>
+    </footer>
+
+    <!-- JavaScript Implementation -->
+    <script>
+        // --- TRANSLATION AND DICTIONARY DICT ---
+        let currentLang = 'en';
+
+        const dictionary = {
+            en: {
+                'sub-title': "Interactive Science Adventure!",
+                'langText': "Bahasa Melayu",
+                'tab1': "Atoms Intro",
+                'tab2': "Ion Formation",
+                'tab3': "Ionisation Effect",
+                'atom-h2': "Meet the Atoms!",
+                'atom-p1': "Everything in our universe is built of tiny building blocks called <strong>Atoms</strong>! At the center is the <strong>nucleus</strong> (housing Proton buddies and Neutron friends), surrounded by buzzing <strong>Electrons</strong> in orbits called shells.",
+                'select-elem': "Select an Element:",
+                'protons': "Protons",
+                'neutrons': "Neutrons",
+                'electrons': "Electrons",
+                'quiz-title': "Test Your Mind!",
+                'q-label': "QUESTION",
+                'ans-label': "Correct Answer:",
+                'tap-flip': "💡 Tap to reveal the answer!",
+                'q1': "Which of the selected elements is highly radioactive and heavy?",
+                'ans1': "Uranium (U)! It contains 92 Protons and 146 Neutrons in its unstable nucleus, making it radioactive.",
+                'q2': "What charge does an electron possess?",
+                'ans2': "Electrons carry a negative electrical charge (-1) and orbit the nucleus.",
+                'ion-h2': "Ion Formation & Electron Exchange",
+                'ion-p1': "Atoms always crave a full outer shell to be completely relaxed and stable (usually 8 valence electrons). To achieve this, some metallic atoms **donate** electrons, while non-metals gladly **receive** them! This process creates electrical charges.",
+                'btn-transfer': "Transfer Electron ⚡",
+                'btn-reset': "Reset Simulation 🔄",
+                'status-title': "Reaction Status",
+                'ion-note': "💡 Metals like Sodium lose negative electrons, turning them into positively-charged ions (cations)! Non-metals like Chlorine gain them, turning them negative (anions).",
+                'q3': "What charge does an atom get when it donates an electron?",
+                'ans3': "It gains a Positive (+) charge! Since it lost a negative electron, there are now more positive protons than electrons.",
+                'q4': "How are Sodium and Chlorine ions held together after exchange?",
+                'ans4': "Through electrostatic attraction! Opposites attract, creating a strong ionic bond to form common table salt (NaCl).",
+                'ionise-h2': "Ionisation Effect of Nuclear Radiation",
+                'ionise-p1': "When unstable radioactive atoms decay, they shoot out high-energy particles (Alpha, Beta, or Gamma rays). As this radiation crashes into surrounding matter, it strips away orbital electrons. This hazardous process is called **Ionisation**!",
+                'fire-alpha': "Fire Alpha (α) 🔴",
+                'fire-beta': "Fire Beta (β) 🔵",
+                'fire-gamma': "Fire Gamma (γ) 🟣",
+                'chamber-title': "Chamber Analysis",
+                'ion-pairs': "Ion Pairs Formed",
+                'energy-lvl': "Energy Level",
+                'strength-idle': "IDLE",
+                'q5': "What is meant by the 'ionising power' of radiation?",
+                'ans5': "It's the ability of radiation to strip electrons from atoms it collides with, forming charged ions.",
+                'q6': "Which of the three radiations has the strongest ionising ability?",
+                'ans6': "Alpha particles (α)! Because they are large, slow, and possess a strong (+2) charge, making them highly effective at stripping electrons."
+            },
+            bm: {
+                'sub-title': "Kembara Sains Interaktif!",
+                'langText': "English",
+                'tab1': "Pengenalan Atom",
+                'tab2': "Pembentukan Ion",
+                'tab3': "Kesan Pengionan",
+                'atom-h2': "Kenali Atom!",
+                'atom-p1': "Setiap benda di alam semesta kita dibina daripada blok binaan yang sangat seni yang dipanggil <strong>Atom</strong>! Di tengahnya ialah <strong>nukleus</strong> (yang mengandungi rakan Proton dan Neutron), dikelilingi oleh <strong>Elektron</strong> yang berputar dalam orbit yang dipanggil petala.",
+                'select-elem': "Pilih Unsur:",
+                'protons': "Proton",
+                'neutrons': "Neutron",
+                'electrons': "Elektron",
+                'quiz-title': "Uji Minda Anda!",
+                'q-label': "SOALAN",
+                'ans-label': "Jawapan Betul:",
+                'tap-flip': "💡 Ketuk untuk melihat jawapan!",
+                'q1': "Unsur terpilih manakah yang sangat radioaktif dan berat?",
+                'ans1': "Uranium (U)! Ia mengandungi 92 Proton dan 146 Neutron di dalam nukleusnya yang tidak stabil, menjadikannya radioaktif.",
+                'q2': "Apakah cas yang dibawa oleh satu elektron?",
+                'ans2': "Elektron membawa cas elektrik negatif (-1) dan mengorbit nukleus.",
+                'ion-h2': "Pembentukan Ion & Pertukaran Elektron",
+                'ion-p1': "Atom sentiasa mahukan petala terluar yang penuh untuk menjadi stabil dan tenang (biasanya 8 elektron valens). Untuk mencapai ini, atom logam akan **menderma** elektron, manakala bukan logam akan senang hati **menerima**! Proses ini mencipta cas elektrik.",
+                'btn-transfer': "Pindahkan Elektron ⚡",
+                'btn-reset': "Set Semula Simulasi 🔄",
+                'status-title': "Status Tindak Balas",
+                'ion-note': "💡 Logam seperti Natrium kehilangan elektron negatif, menjadikannya ion bercas positif (kation)! Bukan logam seperti Klorin menerima elektron tersebut, menjadikannya negatif (anion).",
+                'q3': "Apakah cas yang diperoleh oleh atom apabila ia menderma elektron?",
+                'ans3': "Ia mendapat cas Positif (+)! Kerana apabila ia kehilangan elektron negatif, bilangan proton yang positif kini melebihi elektron.",
+                'q4': "Bagaimanakah ion Natrium dan Klorin ditarik bersama selepas pertukaran?",
+                'ans4': "Melalui tarikan elektrostatik! Cas yang bertentangan akan menarik satu sama lain, membentuk ikatan ionik yang kuat untuk menghasilkan garam dapur (NaCl).",
+                'ionise-h2': "Kesan Pengionan daripada Sinaran Nuklear",
+                'ionise-p1': "Apabila atom radioaktif yang tidak stabil mereput, mereka memancarkan zarah bertenaga tinggi (zarah Alfa, Beta, atau sinar Gamma). Apabila sinaran ini melanggar jirim sekeliling, ia menyingkirkan elektron luar dari atom. Proses berbahaya ini dipanggil **Pengionan**!",
+                'fire-alpha': "Tembak Alfa (α) 🔴",
+                'fire-beta': "Tembak Beta (β) 🔵",
+                'fire-gamma': "Tembak Gamma (γ) 🟣",
+                'chamber-title': "Analisis Kebuk",
+                'ion-pairs': "Pasangan Ion Terhasil",
+                'energy-lvl': "Tahap Tenaga",
+                'strength-idle': "SEDIA",
+                'q5': "Apakah yang dimaksudkan dengan 'kuasa pengionan' sinaran?",
+                'ans5': "Ia adalah keupayaan sinaran untuk merungkai atau menyingkirkan elektron daripada atom yang dilanggarnya, menghasilkan ion bercas.",
+                'q6': "Sinaran manakah antara ketiga-tiga ini mempunyai kuasa pengionan paling kuat?",
+                'ans6': "Zarah Alfa (α)! Kerana saiznya yang besar, perlahan, dan mempunyai cas kuat (+2), menjadikannya sangat efektif menyingkirkan elektron."
+            }
+        };
+
+        function translatePage() {
+            document.querySelectorAll('[data-key]').forEach(elem => {
+                const key = elem.getAttribute('data-key');
+                if (dictionary[currentLang][key]) {
+                    elem.innerHTML = dictionary[currentLang][key];
+                }
+            });
+            // Update other manual elements
+            updateElementDisplay();
+            updateIonStatusText();
+        }
+
+        document.getElementById('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'bm' : 'en';
+            translatePage();
+        });
+
+
+        // --- TAB SWITCHER ---
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('bg-orange-100', 'text-orange-600');
+                b.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+            btn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+            btn.classList.add('bg-orange-100', 'text-orange-600');
+
+            // Force resize trigger for active canvases
+            if (tabId === 'atom-tab') initAtomCanvas();
+            if (tabId === 'ion-tab') initIonCanvas();
+            if (tabId === 'ionisation-tab') initRadiationCanvas();
+        }
+
+        // --- FLIP CARD TOGGLER ---
+        function toggleCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+
+        // ==================== CONCEPT 1: DYNAMIC ATOM EXPLORER ====================
+        const atomData = {
+            H: {
+                name: { en: "Hydrogen (H)", bm: "Hidrogen (H)" },
+                p: 1, n: 0, e: 1,
+                tag: { en: "Stable", bm: "Stabil" },
+                color: "#10b981",
+                desc: { en: "Extremely light gas. Highly flammable!", bm: "Gas yang sangat ringan. Sangat mudah terbakar!" },
+                shells: [1]
+            },
+            C: {
+                name: { en: "Carbon (C)", bm: "Karbon (C)" },
+                p: 6, n: 6, e: 6,
+                tag: { en: "Stable", bm: "Stabil" },
+                color: "#10b981",
+                desc: { en: "Universal building block of life. Solid and stable.", bm: "Blok asas hidupan di Bumi. Pepejal yang stabil." },
+                shells: [2, 4]
+            },
+            O: {
+                name: { en: "Oxygen (O)", bm: "Oksigen (O)" },
+                p: 8, n: 8, e: 8,
+                tag: { en: "Reactive", bm: "Reaktif" },
+                color: "#f59e0b",
+                desc: { en: "Highly reactive gas. Essential for respiration and fire combustion.", bm: "Gas yang sangat reaktif. Penting untuk respirasi dan pembakaran api." },
+                shells: [2, 6]
+            },
+            Na: {
+                name: { en: "Sodium (Na)", bm: "Natrium (Na)" },
+                p: 11, n: 12, e: 11,
+                tag: { en: "Highly Reactive", bm: "Sangat Reaktif" },
+                color: "#ef4444",
+                desc: { en: "Soft, highly reactive metal. Explodes violently when in contact with water!", bm: "Logam lembut yang sangat reaktif. Meletup kuat jika bersentuhan dengan air!" },
+                shells: [2, 8, 1]
+            },
+            Cl: {
+                name: { en: "Chlorine (Cl)", bm: "Klorin (Cl)" },
+                p: 17, n: 18, e: 17,
+                tag: { en: "Reactive Gas", bm: "Gas Reaktif" },
+                color: "#ef4444",
+                desc: { en: "Toxic, yellowish-green gas. Extremely keen to grab an electron.", bm: "Gas toksik kuning-hijau. Sangat cenderung menangkap elektron." },
+                shells: [2, 8, 7]
+            },
+            U: {
+                name: { en: "Uranium-238 (U)", bm: "Uranium-238 (U)" },
+                p: 92, n: 146, e: 92,
+                tag: { en: "Radioactive", bm: "Radioaktif" },
+                color: "#b91c1c",
+                desc: { en: "Very heavy and highly unstable. Nucleus will spontaneously decay, releasing harmful nuclear radiation!", bm: "Sangat berat dan sangat tidak stabil. Nukleus akan reput secara spontan, membebaskan sinaran nuklear merbahaya!" },
+                shells: [2, 8, 18, 32, 21, 9, 2] // Simplified heavy shells for visualization
+            }
+        };
+
+        let selectedElemKey = 'H';
+        const atomCanvas = document.getElementById('atomCanvas');
+        const atomCtx = atomCanvas.getContext('2d');
+        let atomAnimId = null;
+        let rotationAngle = 0;
+
+        function initAtomCanvas() {
+            const size = atomCanvas.parentElement.clientWidth;
+            atomCanvas.width = Math.min(size, 400);
+            atomCanvas.height = Math.min(size, 400);
+        }
+
+        function selectElement(key) {
+            selectedElemKey = key;
+            document.querySelectorAll('.elem-btn').forEach(btn => {
+                if (btn.innerText.includes(key)) {
+                    btn.classList.add('bg-emerald-500', 'text-white');
+                    btn.classList.remove('bg-slate-200', 'text-emerald-800');
+                } else {
+                    btn.classList.add('bg-slate-200', 'text-emerald-800');
+                    btn.classList.remove('bg-emerald-500', 'text-white');
+                }
+            });
+            updateElementDisplay();
+        }
+
+        function updateElementDisplay() {
+            const info = atomData[selectedElemKey];
+            document.getElementById('elem-name').innerText = info.name[currentLang];
+            document.getElementById('elem-tag').innerText = info.tag[currentLang];
+            document.getElementById('elem-tag').style.backgroundColor = info.color;
+            document.getElementById('elem-p').innerText = info.p;
+            document.getElementById('elem-n').innerText = info.n;
+            document.getElementById('elem-e').innerText = info.e;
+            document.getElementById('elem-desc').innerText = info.desc[currentLang];
+        }
+
+        function drawAtomModel() {
+            if (!atomCanvas.width) return;
+            atomCtx.clearRect(0, 0, atomCanvas.width, atomCanvas.height);
+            const cx = atomCanvas.width / 2;
+            const cy = atomCanvas.height / 2;
+            const data = atomData[selectedElemKey];
+
+            // 1. Draw Shells (Orbits)
+            const maxShells = data.shells.length;
+            const maxRadius = Math.min(cx, cy) - 25;
+            const radiusStep = maxRadius / (maxShells + 1);
+
+            atomCtx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            atomCtx.lineWidth = 1.5;
+
+            for (let i = 1; i <= maxShells; i++) {
+                const radius = (i + 1) * radiusStep;
+                atomCtx.beginPath();
+                atomCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+                atomCtx.stroke();
+            }
+
+            // 2. Draw Nucleus (Central clump)
+            const nucleusRad = radiusStep * 0.9;
+            atomCtx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+            atomCtx.beginPath();
+            atomCtx.arc(cx, cy, nucleusRad, 0, Math.PI * 2);
+            atomCtx.fill();
+            atomCtx.strokeStyle = '#38bdf8';
+            atomCtx.lineWidth = 1;
+            atomCtx.stroke();
+
+            // Draw simplified mixed protons and neutrons in center
+            const pCount = Math.min(data.p, 18); // Cap visually to avoid visual overcrowding
+            const nCount = Math.min(data.n, 18);
+            
+            // Fixed pseudorandom arrangement for visual stability
+            const seedArr = [
+                {x: 0, y: 0}, {x: -8, y: -6}, {x: 8, y: 6}, {x: -8, y: 8}, {x: 8, y: -8},
+                {x: 0, y: -12}, {x: 0, y: 12}, {x: -12, y: 0}, {x: 12, y: 0}, {x: -14, y: -10},
+                {x: 14, y: 10}, {x: -15, y: 8}, {x: 15, y: -8}, {x: 4, y: 15}, {x: -4, y: -15}
+            ];
+
+            for(let i = 0; i < pCount; i++) {
+                const pt = seedArr[i % seedArr.length];
+                atomCtx.fillStyle = '#ef4444'; // Red Proton
+                atomCtx.beginPath();
+                atomCtx.arc(cx + pt.x, cy + pt.y, 4, 0, Math.PI * 2);
+                atomCtx.fill();
+            }
+            for(let i = 0; i < nCount; i++) {
+                const pt = seedArr[(i + 5) % seedArr.length];
+                atomCtx.fillStyle = '#3b82f6'; // Blue Neutron
+                atomCtx.beginPath();
+                atomCtx.arc(cx + pt.x + 3, cy + pt.y - 3, 4, 0, Math.PI * 2);
+                atomCtx.fill();
+            }
+
+            // 3. Draw Orbiting Electrons
+            rotationAngle += 0.02; // Orbiting speed
+            data.shells.forEach((electronsInShell, shellIdx) => {
+                const radius = (shellIdx + 2) * radiusStep;
+                const shellSpeedFactor = 1 / (shellIdx + 1);
+
+                for (let j = 0; j < electronsInShell; j++) {
+                    const angle = (j * (Math.PI * 2) / electronsInShell) + (rotationAngle * shellSpeedFactor);
+                    const ex = cx + radius * Math.cos(angle);
+                    const ey = cy + radius * Math.sin(angle);
+
+                    // Electron glow
+                    atomCtx.shadowBlur = 10;
+                    atomCtx.shadowColor = '#facc15';
+                    atomCtx.fillStyle = '#facc15'; // Glowing Yellow Electron
+                    atomCtx.beginPath();
+                    atomCtx.arc(ex, ey, 5, 0, Math.PI * 2);
+                    atomCtx.fill();
+                    
+                    // Reset shadow configuration
+                    atomCtx.shadowBlur = 0;
+                }
+            });
+
+            atomAnimId = requestAnimationFrame(drawAtomModel);
+        }
+
+
+        // ==================== CONCEPT 2: ION FORMATION SANDBOX ====================
+        const ionCanvas = document.getElementById('ionCanvas');
+        const ionCtx = ionCanvas.getContext('2d');
+        let ionAnimId = null;
+
+        // Coordinates & state of elements in Ion Simulation
+        let ionSimState = {
+            step: 'idle', // 'idle' -> 'transferring' -> 'bonded'
+            electronPos: { x: 0, y: 0 },
+            electronTarget: { x: 0, y: 0 },
+            t: 0,
+            sodiumX: 0,
+            chlorineX: 0,
+            canvasWidth: 0,
+            canvasHeight: 0
+        };
+
+        function initIonCanvas() {
+            const w = ionCanvas.parentElement.clientWidth - 32;
+            ionCanvas.width = w;
+            ionCanvas.height = w * (9/16); // Always enforce 16:9 aspect ratio
+
+            ionSimState.canvasWidth = ionCanvas.width;
+            ionSimState.canvasHeight = ionCanvas.height;
+
+            resetIonSimulation();
+        }
+
+        function resetIonSimulation() {
+            const w = ionSimState.canvasWidth;
+            const h = ionSimState.canvasHeight;
+
+            ionSimState.step = 'idle';
+            ionSimState.sodiumX = w * 0.28;
+            ionSimState.chlorineX = w * 0.72;
+            ionSimState.electronPos = { x: ionSimState.sodiumX + 50, y: h/2 };
+            ionSimState.t = 0;
+
+            updateIonStatusText();
+        }
+
+        function triggerIonTransfer() {
+            if (ionSimState.step === 'idle') {
+                ionSimState.step = 'transferring';
+                ionSimState.t = 0;
+            }
+        }
+
+        function updateIonStatusText() {
+            const naLabel = document.getElementById('na-ion-label');
+            const naText = document.getElementById('na-status-text');
+            const clLabel = document.getElementById('cl-ion-label');
+            const clText = document.getElementById('cl-status-text');
+
+            if (ionSimState.step === 'idle') {
+                naLabel.innerText = currentLang === 'en' ? "Atom (Neutral)" : "Atom (Neutral)";
+                naLabel.className = "bg-orange-200 text-orange-800 px-2 py-0.5 rounded text-[10px] uppercase font-bold";
+                naText.innerText = currentLang === 'en' ? "Has 1 valence electron. Ready to donate!" : "Mempunyai 1 elektron valens. Bersedia menderma!";
+
+                clLabel.innerText = currentLang === 'en' ? "Atom (Neutral)" : "Atom (Neutral)";
+                clLabel.className = "bg-green-200 text-green-800 px-2 py-0.5 rounded text-[10px] uppercase font-bold";
+                clText.innerText = currentLang === 'en' ? "Has 7 valence electrons. Needs 1 electron." : "Mempunyai 7 elektron valens. Memerlukan 1 elektron.";
+            } else if (ionSimState.step === 'transferring') {
+                naLabel.innerText = currentLang === 'en' ? "Donating..." : "Menderma...";
+                clLabel.innerText = currentLang === 'en' ? "Receiving..." : "Menerima...";
+            } else {
+                naLabel.innerText = currentLang === 'en' ? "Cation (Na+)" : "Kation (Na+)";
+                naLabel.className = "bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] uppercase font-bold";
+                naText.innerText = currentLang === 'en' ? "Lost 1 electron. Positive Net Charge (+1)!" : "Hilang 1 elektron. Cas Bersih Positif (+1)!";
+
+                clLabel.innerText = currentLang === 'en' ? "Anion (Cl-)" : "Anion (Cl-)";
+                clLabel.className = "bg-red-600 text-white px-2 py-0.5 rounded text-[10px] uppercase font-bold";
+                clText.innerText = currentLang === 'en' ? "Gained 1 electron. Negative Net Charge (-1)!" : "Menerima 1 elektron. Cas Bersih Negatif (-1)!";
+            }
+        }
+
+        function drawIonSandbox() {
+            ionCtx.clearRect(0, 0, ionCanvas.width, ionCanvas.height);
+            const cy = ionCanvas.height / 2;
+            const w = ionCanvas.width;
+
+            // 1. Draw Na (Sodium)
+            const naRad = 45;
+            ionCtx.lineWidth = 1;
+
+            // Outer Orbit circles for Sodium
+            ionCtx.strokeStyle = 'rgba(249, 115, 22, 0.2)';
+            [naRad + 15, naRad + 30].forEach(r => {
+                ionCtx.beginPath();
+                ionCtx.arc(ionSimState.sodiumX, cy, r, 0, Math.PI*2);
+                ionCtx.stroke();
+            });
+
+            // Nucleus base
+            ionCtx.fillStyle = '#f97316';
+            ionCtx.beginPath();
+            ionCtx.arc(ionSimState.sodiumX, cy, naRad, 0, Math.PI * 2);
+            ionCtx.fill();
+            ionCtx.fillStyle = '#fff';
+            ionCtx.font = 'bold 16px Arial';
+            ionCtx.fillText("Na", ionSimState.sodiumX - 10, cy + 6);
+
+            // 2. Draw Cl (Chlorine)
+            const clRad = 55;
+            // Outer Orbit circles for Chlorine
+            ionCtx.strokeStyle = 'rgba(34, 197, 94, 0.2)';
+            [clRad + 15, clRad + 30].forEach(r => {
+                ionCtx.beginPath();
+                ionCtx.arc(ionSimState.chlorineX, cy, r, 0, Math.PI*2);
+                ionCtx.stroke();
+            });
+
+            ionCtx.fillStyle = '#22c55e';
+            ionCtx.beginPath();
+            ionCtx.arc(ionSimState.chlorineX, cy, clRad, 0, Math.PI * 2);
+            ionCtx.fill();
+            ionCtx.fillStyle = '#fff';
+            ionCtx.font = 'bold 16px Arial';
+            ionCtx.fillText("Cl", ionSimState.chlorineX - 9, cy + 6);
+
+            // 3. Electron Transfer Logic
+            if (ionSimState.step === 'idle') {
+                // Outer valence electron sits on Sodium
+                ionSimState.electronPos = { x: ionSimState.sodiumX + naRad + 30, y: cy };
+                
+                // Draw the lonely valence electron
+                ionCtx.fillStyle = '#facc15';
+                ionCtx.beginPath();
+                ionCtx.arc(ionSimState.electronPos.x, ionSimState.electronPos.y, 6, 0, Math.PI * 2);
+                ionCtx.fill();
+
+                // Simple orbit loop lines
+                ionCtx.strokeStyle = '#facc15';
+                ionCtx.setLineDash([4, 4]);
+                ionCtx.beginPath();
+                ionCtx.arc(ionSimState.sodiumX, cy, naRad + 30, 0, Math.PI * 2);
+                ionCtx.stroke();
+                ionCtx.setLineDash([]);
+            } 
+            else if (ionSimState.step === 'transferring') {
+                ionSimState.t += 0.015;
+                if (ionSimState.t > 1) {
+                    ionSimState.step = 'bonded';
+                    updateIonStatusText();
+                }
+
+                // Smooth linear interpolation across space
+                const startX = ionSimState.sodiumX + naRad + 30;
+                const endX = ionSimState.chlorineX - clRad - 30;
+                ionSimState.electronPos.x = startX + (endX - startX) * ionSimState.t;
+                // Give a slight arc wave to path
+                ionSimState.electronPos.y = cy - Math.sin(ionSimState.t * Math.PI) * 40;
+
+                // Draw moving electron with motion tail
+                ionCtx.fillStyle = '#facc15';
+                ionCtx.shadowBlur = 15;
+                ionCtx.shadowColor = '#facc15';
+                ionCtx.beginPath();
+                ionCtx.arc(ionSimState.electronPos.x, ionSimState.electronPos.y, 7, 0, Math.PI * 2);
+                ionCtx.fill();
+                ionCtx.shadowBlur = 0;
+            } 
+            else if (ionSimState.step === 'bonded') {
+                // Attract Cation and Anion together slowly!
+                const desiredSodiumX = w * 0.38;
+                const desiredChlorineX = w * 0.62;
+                
+                if (ionSimState.sodiumX < desiredSodiumX) {
+                    ionSimState.sodiumX += 1;
+                    ionSimState.chlorineX -= 1;
+                }
+
+                // Place transferred electron in Chlorine valence shell
+                const eAngle = Math.PI; // Position facing towards Sodium
+                const ex = ionSimState.chlorineX + (clRad + 30) * Math.cos(eAngle);
+                const ey = cy + (clRad + 30) * Math.sin(eAngle);
+
+                ionCtx.fillStyle = '#facc15';
+                ionCtx.beginPath();
+                ionCtx.arc(ex, ey, 6, 0, Math.PI * 2);
+                ionCtx.fill();
+
+                // Draw Attraction electrostatic waves
+                ionCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+                ionCtx.lineWidth = 2;
+                ionCtx.setLineDash([5, 5]);
+                ionCtx.beginPath();
+                ionCtx.moveTo(ionSimState.sodiumX, cy);
+                ionCtx.lineTo(ionSimState.chlorineX, cy);
+                ionCtx.stroke();
+                ionCtx.setLineDash([]);
+
+                // Add plus and minus charge bubbles
+                ionCtx.fillStyle = '#3b82f6'; // Positive Sodium Ion
+                ionCtx.beginPath();
+                ionCtx.arc(ionSimState.sodiumX + 30, cy - 30, 12, 0, Math.PI * 2);
+                ionCtx.fill();
+                ionCtx.fillStyle = '#fff';
+                ionCtx.font = 'bold 12px Arial';
+                ionCtx.fillText("+", ionSimState.sodiumX + 27, cy - 26);
+
+                ionCtx.fillStyle = '#ef4444'; // Negative Chlorine Ion
+                ionCtx.beginPath();
+                ionCtx.arc(ionSimState.chlorineX - 30, cy - 30, 12, 0, Math.PI * 2);
+                ionCtx.fill();
+                ionCtx.fillStyle = '#fff';
+                ionCtx.fillText("-", ionSimState.chlorineX - 33, cy - 26);
+            }
+
+            ionAnimId = requestAnimationFrame(drawIonSandbox);
+        }
+
+
+        // ==================== CONCEPT 3: IONISATION CHAMBER ====================
+        const radCanvas = document.getElementById('radiationCanvas');
+        const radCtx = radCanvas.getContext('2d');
+        let radAnimId = null;
+
+        let chamberAtoms = [];
+        let particles = [];
+        let ionPairsCount = 0;
+
+        function initRadiationCanvas() {
+            const w = radCanvas.parentElement.clientWidth - 32;
+            radCanvas.width = w;
+            radCanvas.height = w * (9/16);
+
+            resetRadiationSim();
+        }
+
+        function resetRadiationSim() {
+            chamberAtoms = [];
+            particles = [];
+            ionPairsCount = 0;
+            document.getElementById('ion-pairs-count').innerText = 0;
+            document.getElementById('radiation-strength').innerText = currentLang === 'en' ? "IDLE" : "SEDIA";
+            document.getElementById('radiation-strength').className = "text-xl font-bold text-slate-500";
+
+            // Spawn stable target atoms randomly in gas chamber
+            const count = 10;
+            for (let i = 0; i < count; i++) {
+                chamberAtoms.push({
+                    x: radCanvas.width * 0.25 + Math.random() * (radCanvas.width * 0.65),
+                    y: radCanvas.height * 0.15 + Math.random() * (radCanvas.height * 0.7),
+                    isIonised: false,
+                    electrons: [
+                        { angle: 0, speed: 0.05 },
+                        { angle: Math.PI, speed: 0.05 }
+                    ],
+                    ioniseTimer: 0
+                });
+            }
+        }
+
+        function fireRadiation(type) {
+            let speed = 4;
+            let size = 12;
+            let charge = "+2";
+            let color = "#eab308"; // Alpha yellow
+            let count = 1;
+
+            if (type === 'alpha') {
+                speed = 3;
+                size = 14;
+                color = "#f59e0b"; // Golden heavy alpha
+                document.getElementById('radiation-strength').innerText = currentLang === 'en' ? "HIGH (α)" : "TINGGI (α)";
+                document.getElementById('radiation-strength').className = "text-xl font-bold text-amber-500";
+            } else if (type === 'beta') {
+                speed = 6;
+                size = 6;
+                color = "#3b82f6"; // Blue fast beta
+                document.getElementById('radiation-strength').innerText = currentLang === 'en' ? "MEDIUM (β)" : "SEDERHANA (β)";
+                document.getElementById('radiation-strength').className = "text-xl font-bold text-blue-500";
+            } else if (type === 'gamma') {
+                speed = 9;
+                size = 4;
+                color = "#a855f7"; // Purple speed electromagnetic wave
+                document.getElementById('radiation-strength').innerText = currentLang === 'en' ? "LOW (γ)" : "RENDAH (γ)";
+                document.getElementById('radiation-strength').className = "text-xl font-bold text-purple-500";
+                count = 3; // Waves of photons
+            }
+
+            for(let i=0; i<count; i++) {
+                particles.push({
+                    x: 0,
+                    y: radCanvas.height * 0.3 + (i * 40) + Math.random() * 80,
+                    vx: speed,
+                    vy: (Math.random() - 0.5) * 1,
+                    size: size,
+                    color: color,
+                    type: type,
+                    ionisedCount: 0
+                });
+            }
+        }
+
+        function drawRadiationSandbox() {
+            radCtx.clearRect(0, 0, radCanvas.width, radCanvas.height);
+            const w = radCanvas.width;
+            const h = radCanvas.height;
+
+            // Draw Source gun on left
+            radCtx.fillStyle = '#475569';
+            radCtx.fillRect(0, h/2 - 40, 45, 80);
+            radCtx.fillStyle = '#ef4444';
+            radCtx.beginPath();
+            radCtx.arc(45, h/2, 15, -Math.PI/2, Math.PI/2);
+            radCtx.fill();
+
+            // 1. Draw Target Atoms
+            chamberAtoms.forEach(atom => {
+                // If recently hit/ionised, flash its danger glow
+                if (atom.isIonised) {
+                    radCtx.shadowBlur = 15;
+                    radCtx.shadowColor = 'rgba(239, 68, 68, 0.8)';
+                    radCtx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+                    radCtx.fillStyle = 'rgba(239, 68, 68, 0.15)';
+                } else {
+                    radCtx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+                    radCtx.fillStyle = 'rgba(15, 23, 42, 0.5)';
+                }
+
+                // Nucleus draw
+                radCtx.beginPath();
+                radCtx.arc(atom.x, atom.y, 14, 0, Math.PI * 2);
+                radCtx.fill();
+                radCtx.stroke();
+                radCtx.shadowBlur = 0;
+
+                // Orbit rings
+                radCtx.beginPath();
+                radCtx.arc(atom.x, atom.y, 28, 0, Math.PI * 2);
+                radCtx.stroke();
+
+                // Electron orbitals
+                atom.electrons.forEach(e => {
+                    e.angle += e.speed;
+                    const ex = atom.x + 28 * Math.cos(e.angle);
+                    const ey = atom.y + 28 * Math.sin(e.angle);
+
+                    radCtx.fillStyle = '#facc15';
+                    radCtx.beginPath();
+                    radCtx.arc(ex, ey, 3.5, 0, Math.PI * 2);
+                    radCtx.fill();
+                });
+
+                // Display ionic symbol if charged
+                if (atom.isIonised) {
+                    radCtx.fillStyle = '#ef4444';
+                    radCtx.font = 'bold 10px Arial';
+                    radCtx.fillText("+", atom.x - 4, atom.y + 4);
+                }
+            });
+
+            // 2. Draw Radiation projectiles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+
+                // Draw Particle
+                radCtx.shadowBlur = 10;
+                radCtx.shadowColor = p.color;
+                radCtx.fillStyle = p.color;
+                
+                if (p.type === 'gamma') {
+                    // Draw wavy photon line
+                    radCtx.strokeStyle = p.color;
+                    radCtx.lineWidth = 3;
+                    radCtx.beginPath();
+                    for(let xOff = 0; xOff < 30; xOff += 2) {
+                        radCtx.lineTo(p.x - xOff, p.y + Math.sin((p.x - xOff) * 0.3) * 6);
+                    }
+                    radCtx.stroke();
+                } else {
+                    // Draw Alpha or Beta globes
+                    radCtx.beginPath();
+                    radCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    radCtx.fill();
+                }
+                radCtx.shadowBlur = 0;
+
+                // Collisions check against atoms
+                chamberAtoms.forEach(atom => {
+                    const dist = Math.sqrt((p.x - atom.x) ** 2 + (p.y - atom.y) ** 2);
+                    
+                    // Collision criteria based on radiation size & properties
+                    const collisionDist = p.type === 'alpha' ? 35 : 25;
+                    
+                    if (dist < collisionDist && !atom.isIonised) {
+                        // Ionise trigger!
+                        atom.isIonised = true;
+                        
+                        // Knock away an electron! Strip from the array
+                        if (atom.electrons.length > 0) {
+                            atom.electrons.pop();
+                        }
+
+                        // Create a separate stray free electron flying away
+                        particles.push({
+                            x: atom.x,
+                            y: atom.y,
+                            vx: (Math.random() - 0.5) * 4,
+                            vy: -3 - Math.random() * 3,
+                            size: 2,
+                            color: '#eab308',
+                            type: 'electron-debris'
+                        });
+
+                        ionPairsCount++;
+                        document.getElementById('ion-pairs-count').innerText = ionPairsCount;
+                    }
+                });
+
+                // Remove out of bounds elements
+                if (p.x > w + 50 || p.x < -50 || p.y < -50 || p.y > h + 50) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            radAnimId = requestAnimationFrame(drawRadiationSandbox);
+        }
+
+
+        // ==================== MASTER INITIALIZER ====================
+        window.onload = function() {
+            // Setup canvas dimension sizes on device load
+            initAtomCanvas();
+            initIonCanvas();
+            initRadiationCanvas();
+
+            // Run animations simultaneously
+            drawAtomModel();
+            drawIonSandbox();
+            drawRadiationSandbox();
+
+            // Bind dynamic resize support to keep simulations fluid on mobiles and tablets
+            window.addEventListener('resize', () => {
+                initAtomCanvas();
+                initIonCanvas();
+                initRadiationCanvas();
+            });
+            
+            // Set default language state
+            translatePage();
+        }
+    </script>
+</body>
+</html>

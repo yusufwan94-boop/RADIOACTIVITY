@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atomic & Radioactivity Adventure Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a Cheerful Aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, .brand-font {
+            font-family: 'Fredoka One', cursive;
+        }
+        /* Custom floating animation for background elements */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        .floating-element-delayed {
+            animation: float 8s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-sky-100 via-amber-50 to-emerald-50 flex flex-col justify-between relative">
+
+    <!-- Interactive Background Canvas for Floating Subatomic Particles -->
+    <canvas id="bgCanvas" class="absolute inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- Header / Language Selector -->
+    <header class="w-full max-w-6xl mx-auto p-4 flex justify-between items-center z-10">
+        <!-- Cute Science Mascot Logo -->
+        <div class="flex items-center gap-2 bg-white/80 backdrop-blur-sm py-2 px-4 rounded-full shadow-sm border border-amber-200">
+            <span class="text-2xl animate-spin" style="animation-duration: 4s;">⚛️</span>
+            <span class="brand-font text-amber-600 text-sm sm:text-base tracking-wide">ScienceFun Lab</span>
+        </div>
+        
+        <!-- Bilingual Switcher -->
+        <button id="langToggle" class="bg-amber-400 hover:bg-amber-500 text-white font-bold px-4 py-2 rounded-full shadow-md transition-all transform active:scale-95 hover:shadow-lg flex items-center gap-2 border-2 border-white text-sm sm:text-base">
+            <span>🌐</span> <span id="langText">Bahasa Melayu</span>
+        </button>
+    </header>
+
+    <!-- Main Portal Content -->
+    <main class="w-full max-w-5xl mx-auto px-4 py-6 flex flex-col items-center justify-center flex-grow z-10">
+        
+        <!-- Welcome Hero Section -->
+        <div class="text-center max-w-2xl mb-12 space-y-4">
+            <div class="inline-block bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm border border-emerald-300 floating-element">
+                🚀 <span data-key="badge">Interactive School Lab</span>
+            </div>
+            <h1 class="text-4xl sm:text-6xl text-slate-800 tracking-wide drop-shadow-sm leading-tight">
+                <span data-key="main-title-1">The Great</span> 
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-emerald-500" data-key="main-title-2">Atom & Radioactivity</span> 
+                <span data-key="main-title-3">Quest!</span>
+            </h1>
+            <p class="text-slate-600 text-base sm:text-xl font-medium leading-relaxed px-2" data-key="subtitle">
+                Welcome, Future Scientists! Let's take a joyful dive into the invisible world of atoms, reactions, and nuclear energy. Which level will you explore first?
+            </p>
+        </div>
+
+        <!-- Choice Navigation Cards (The Buttons) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl px-2">
+            
+            <!-- BUTTON 1: INTRODUCTION OF ELEMENTS -->
+            <a href="radioactive1.html" class="group bg-white hover:bg-gradient-to-br hover:from-white hover:to-emerald-50/50 p-6 sm:p-8 rounded-3xl shadow-xl hover:shadow-2xl border-4 border-emerald-300 transition-all transform hover:-translate-y-2 flex flex-col justify-between items-center text-center relative overflow-hidden">
+                <!-- Top Decorative Badge -->
+                <div class="absolute top-0 right-0 bg-emerald-300 text-emerald-900 font-bold px-6 py-1.5 rounded-bl-2xl text-xs tracking-wider" data-key="lvl1-tag">
+                    LEVEL 1
+                </div>
+                
+                <div class="space-y-4 mt-4">
+                    <!-- Icon / Visual representation -->
+                    <div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center text-5xl shadow-inner group-hover:scale-110 transition-transform duration-300 relative">
+                        🔬
+                        <!-- Little orbiting electron visual element -->
+                        <span class="absolute text-base animate-ping" style="top: 10%; right: 10%;">⚡</span>
+                    </div>
+                    
+                    <h2 class="text-2xl sm:text-3xl text-emerald-800 tracking-wide" data-key="card1-title">
+                        Introduction of Elements
+                    </h2>
+                    
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed" data-key="card1-desc">
+                        Meet the atoms, explore the periodic table, see how shells work, and discover how metals share electrons to form cool chemical ions!
+                    </p>
+                </div>
+
+                <!-- Action Button inside card -->
+                <div class="mt-8 bg-emerald-500 group-hover:bg-emerald-600 text-white font-bold text-base sm:text-lg px-8 py-3 rounded-2xl shadow-md group-hover:shadow-lg transition-all w-full flex items-center justify-center gap-2">
+                    <span data-key="card1-btn">Let's Explore!</span> ➡️
+                </div>
+            </a>
+
+            <!-- BUTTON 2: ADVANCED RADIOACTIVITY -->
+            <a href="radioactive2.html" class="group bg-white hover:bg-gradient-to-br hover:from-white hover:to-orange-50/50 p-6 sm:p-8 rounded-3xl shadow-xl hover:shadow-2xl border-4 border-orange-300 transition-all transform hover:-translate-y-2 flex flex-col justify-between items-center text-center relative overflow-hidden">
+                <!-- Top Decorative Badge -->
+                <div class="absolute top-0 right-0 bg-orange-300 text-orange-900 font-bold px-6 py-1.5 rounded-bl-2xl text-xs tracking-wider" data-key="lvl2-tag">
+                    LEVEL 2
+                </div>
+
+                <div class="space-y-4 mt-4">
+                    <!-- Icon / Visual representation -->
+                    <div class="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center text-5xl shadow-inner group-hover:scale-110 transition-transform duration-300 relative">
+                        ⚠️
+                        <!-- Little hazard pulsing element -->
+                        <span class="absolute text-base animate-bounce" style="bottom: 10%; left: 10%;">☢️</span>
+                    </div>
+                    
+                    <h2 class="text-2xl sm:text-3xl text-orange-800 tracking-wide" data-key="card2-title">
+                        Advanced Radioactivity
+                    </h2>
+                    
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed" data-key="card2-desc">
+                        Unleash the power of nuclear decay! Fire Alpha, Beta, and Gamma rays in the sandbox chamber and watch real-time atomic ionisation.
+                    </p>
+                </div>
+
+                <!-- Action Button inside card -->
+                <div class="mt-8 bg-orange-500 group-hover:bg-orange-600 text-white font-bold text-base sm:text-lg px-8 py-3 rounded-2xl shadow-md group-hover:shadow-lg transition-all w-full flex items-center justify-center gap-2">
+                    <span data-key="card2-btn">Enter Chamber</span> ➡️
+                </div>
+            </a>
+
+        </div>
+
+    </main>
+
+    <!-- Footer Area -->
+    <footer class="w-full text-center py-6 px-4 bg-slate-800 text-slate-300 text-xs sm:text-sm mt-12 border-t-4 border-amber-400 z-10">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p>&copy; 2026 Radioactivity Physics School Simulator 🇲🇾</p>
+            <p class="opacity-85" data-key="footer-note">Perfect for Smart Classrooms, Projectors, and Personal Tablets.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive Background Particles Engine -->
+    <script>
+        // --- TRANSLATION MODULE ---
+        let currentLang = 'en';
+
+        const dictionary = {
+            en: {
+                'langText': "Bahasa Melayu",
+                'badge': "Interactive School Lab",
+                'main-title-1': "The Great",
+                'main-title-2': "Atom & Radioactivity",
+                'main-title-3': "Quest!",
+                'subtitle': "Welcome, Future Scientists! Let's take a joyful dive into the invisible world of atoms, reactions, and nuclear energy. Which level will you explore first?",
+                'lvl1-tag': "LEVEL 1",
+                'card1-title': "Introduction of Elements",
+                'card1-desc': "Meet the atoms, explore the periodic table, see how shells work, and discover how metals share electrons to form cool chemical ions!",
+                'card1-btn': "Let's Explore!",
+                'lvl2-tag': "LEVEL 2",
+                'card2-title': "Advanced Radioactivity",
+                'card2-desc': "Unleash the power of nuclear decay! Fire Alpha, Beta, and Gamma rays in the sandbox chamber and watch real-time atomic ionisation.",
+                'card2-btn': "Enter Chamber",
+                'footer-note': "Perfect for Smart Classrooms, Projectors, and Personal Tablets."
+            },
+            bm: {
+                'langText': "English",
+                'badge': "Makmal Sekolah Interaktif",
+                'main-title-1': "Kembara Hebat",
+                'main-title-2': "Atom & Radioaktiviti",
+                'main-title-3': "Kita!",
+                'subtitle': "Selamat Datang, Saintis Muda! Jom terokai dunia seni atom, tindak balas, dan tenaga nuklear yang menakjubkan. Tahap manakah pilihan anda dahulu?",
+                'lvl1-tag': "TAHAP 1",
+                'card1-title': "Pengenalan Unsur",
+                'card1-desc': "Kenali rakan atom, terokai jadual berkala, fahami orbit petala, dan lihat bagaimana logam berkongsi elektron untuk membina ion kimia bercas!",
+                'card1-btn': "Jom Teroka!",
+                'lvl2-tag': "TAHAP 2",
+                'card2-title': "Radioaktiviti Lanjutan",
+                'card2-desc': "Ketahui kuasa pereputan nuklear! Tembak sinaran Alfa, Beta, dan Gamma di kebuk simulasi dan saksikan kesan pengionan atom.",
+                'card2-btn': "Masuk Kebuk",
+                'footer-note': "Sesuai untuk Bilik Darjah Pintar, Projektor, dan Peranti Tablet."
+            }
+        };
+
+        function translatePage() {
+            document.querySelectorAll('[data-key]').forEach(elem => {
+                const key = elem.getAttribute('data-key');
+                if (dictionary[currentLang][key]) {
+                    elem.innerHTML = dictionary[currentLang][key];
+                }
+            });
+        }
+
+        document.getElementById('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'bm' : 'en';
+            translatePage();
+        });
+
+
+        // --- FLOATING PARTICLES CANVAS ANIMATION ---
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 8 + 4;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                
+                // Red = Protons, Blue = Neutrons, Yellow = Electrons
+                const types = [
+                    { color: 'rgba(239, 68, 68, 0.15)', name: 'p' }, // light red
+                    { color: 'rgba(59, 130, 246, 0.15)', name: 'n' }, // light blue
+                    { color: 'rgba(234, 179, 8, 0.15)', name: 'e' }  // light yellow
+                ];
+                const selected = types[Math.floor(Math.random() * types.length)];
+                this.color = selected.color;
+                this.label = selected.name;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Bounce off boundaries
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                
+                // Draw tiny symbol inside
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.08)';
+                ctx.font = '9px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.label, this.x, this.y);
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const count = Math.min(Math.floor(window.innerWidth / 20), 45); // Adapt amount to device width
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initParticles();
+        });
+
+        // Initialize Page
+        resizeCanvas();
+        initParticles();
+        animate();
+        translatePage();
+    </script>
+</body>
+</html>
